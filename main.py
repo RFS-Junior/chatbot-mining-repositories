@@ -9,10 +9,10 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     # Token do GitHub (substitua pelo seu token real)
-    github_token = "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"
+    github_token = ""
 
     # URL do repositório GitHub (substitua pela URL do repositório desejado)
-    repository_url = "https://github.com/RFS-Junior/assist-novice-flutter-cdd"
+    repository_url = ""
 
     # Nome da coleção no Qdrant
     collection_name = "github_repo_x"
