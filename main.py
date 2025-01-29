@@ -9,24 +9,24 @@ def main():
     logging.basicConfig(level=logging.INFO)
 
     # Token do GitHub (substitua pelo seu token real)
-    github_token = ""
+    github_token = None
 
     # URL do repositório GitHub (substitua pela URL do repositório desejado)
-    repository_url = ""
+    repository_url = None
 
     # Nome da coleção no Qdrant
     collection_name = "github_repo_x"
 
     # Passo 1: Processar e indexar os documentos do repositório
-    #logging.info("Iniciando o processamento do repositório...")
-    #document_processor = DocumentProcessor(github_token)
+    logging.info("Iniciando o processamento do repositório...")
+    document_processor = DocumentProcessor(github_token)
 
-    #try:
-    #    chunks = document_processor.process_and_index(repository_url)
-    #    logging.info(f"{len(chunks)} chunks processados e indexados no Qdrant.")
-    #except Exception as e:
-    #    logging.error(f"Erro ao processar o repositório: {str(e)}")
-    #    sys.exit(1)
+    try:
+        chunks = document_processor.process_and_index(repository_url)
+        logging.info(f"{len(chunks)} chunks processados e indexados no Qdrant.")
+    except Exception as e:
+        logging.error(f"Erro ao processar o repositório: {str(e)}")
+        sys.exit(1)
 
     # Passo 2: Preparar o modelo de query (QueryChain)
     logging.info("Iniciando o processo de consulta...")
