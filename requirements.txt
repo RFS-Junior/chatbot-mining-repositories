@@ -6,6 +6,7 @@ tiktoken==0.8.0
 requests==2.32.3
 FlashRank==0.2.10
 langchain==0.3.16
+python-dotenv==1.0.1
 transformers==4.48.1
 qdrant-client==1.13.2
 langchain-ollama==0.2.2

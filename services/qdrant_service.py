@@ -1,7 +1,7 @@
 import logging
 from typing import List, Dict, Any, Optional
 from qdrant_client import QdrantClient
-from qdrant_client.models import Distance, VectorParams, PointStruct
+from qdrant_client.models import VectorParams, PointStruct
 
 class QdrantDatabase:
     _instance = None

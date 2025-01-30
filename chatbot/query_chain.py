@@ -1,6 +1,5 @@
-from ollama import chat
 from langchain_ollama import ChatOllama
-from document_retriever import DocumentRetriever
+from data_processing.document_retriever import DocumentRetriever
 
 class QueryChain:
     def __init__(self, collection_name: str):

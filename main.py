@@ -1,25 +1,21 @@
 import logging
-from document_processor import DocumentProcessor
-from query_chain import QueryChain
+from data_processing.document_processor import DocumentProcessor
+from chatbot.query_chain import QueryChain
 import sys
-import time
 
 def main():
     # Configuração de logging
     logging.basicConfig(level=logging.INFO)
 
-    # Token do GitHub (substitua pelo seu token real)
-    github_token = None
-
     # URL do repositório GitHub (substitua pela URL do repositório desejado)
-    repository_url = None
+    repository_url = ""
 
-    # Nome da coleção no Qdrant
-    collection_name = "github_repo_x"
+    # Pega o nome da coleção para o Qdrant
+    collection_name = repository_url.split("/")[-1]
 
     # Passo 1: Processar e indexar os documentos do repositório
     logging.info("Iniciando o processamento do repositório...")
-    document_processor = DocumentProcessor(github_token)
+    document_processor = DocumentProcessor()
 
     try:
         chunks = document_processor.process_and_index(repository_url)
@@ -33,7 +29,7 @@ def main():
     query_chain = QueryChain(collection_name)
 
     # Exemplo de consulta
-    query = "Qual a data do último commit realizado?"
+    query = "Quantos commits nós temos?"
 
     try:
         # Resposta usando o modelo de linguagem (LLM) com base nos documentos indexados

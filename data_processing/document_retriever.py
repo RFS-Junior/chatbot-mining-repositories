@@ -9,6 +9,7 @@ class DocumentRetriever:
         self.embedder = SentenceTransformer("all-MiniLM-L6-v2")
 
     def retrieve(self, query: str, top_k: int = 5):
+        """Busca documentos no Qdrant com base no texto da query."""
         vector_hits = self.client.search_similar(
             self.collection_name,   
             vector=self.embedder.encode(query),

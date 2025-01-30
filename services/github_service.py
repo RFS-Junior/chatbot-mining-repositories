@@ -1,25 +1,16 @@
-import json
+import os
 import time
-from uuid import uuid4
 from github import Github
+from dotenv import load_dotenv
 from datetime import datetime
 from github.Commit import Commit
-from embedder import Embedder
-from langchain.text_splitter import TokenTextSplitter
-from sentence_transformers import SentenceTransformer
 from pydriller import Repository
-import tiktoken
 
-class DocumentProcessor:
-    def __init__(self, github_token: str):
+class GitHubService:
+    def __init__(self):
         """Inicializa o processador de repositórios com o token do GitHub e o modelo de embeddings."""
-        self.github = Github(github_token)
-        self.tokenizer = tiktoken.get_encoding("cl100k_base")  # Configuração correta do tokenizer
-        self.code_embedder = Embedder("github_repo_x") 
-        self.splitter = TokenTextSplitter(
-            chunk_size=350,
-            chunk_overlap=20
-        )
+        load_dotenv()
+        self.github = Github(os.getenv('SECRET_KEY'))
     
     @staticmethod
     def handle_commit(obj):
@@ -29,6 +20,10 @@ class DocumentProcessor:
         if isinstance(obj, datetime):
             return obj.isoformat()
         raise TypeError(f'Object of type {obj.__class__.__name__} is not JSON serializable')
+    
+    def extract_repo_name_from_url(self, url):
+        """Extrai o nome do repositório a partir da URL fornecida."""
+        return url.split("github.com/")[1]
 
     def rate_limit_check(self):
         """Verifica o limite de requisições da API do GitHub."""
@@ -120,29 +115,3 @@ class DocumentProcessor:
         repository_data["updated_at"] = datetime.utcnow().isoformat()
 
         return repository_data
-
-    def extract_repo_name_from_url(self, url):
-        """Extrai o nome do repositório a partir da URL fornecida."""
-        return url.split("github.com/")[1]
-    
-    def _chunk_data(self, repository_url: str):
-        """Processa os dados extraídos do repositório e divide-os em chunks.""" 
-        repository_data = self.form_metadata(repository_url)
-        json_str = json.dumps(repository_data, indent=1, default=self.handle_commit)
-        chunks = self.splitter.split_text(json_str)
-
-        return [{
-            "id": str(uuid4()),
-            "content": chunk,
-            "tokens": len(self.tokenizer.encode(chunk)),
-            "metadata": {
-                "source": repository_data["url"],
-                "chunk_type": "repository_data"
-            }
-        } for chunk in chunks]
-
-    def process_and_index(self, repository_url: str):
-        """Processa os dados do repositório e os indexa no Qdrant."""
-        chunks = self._chunk_data(repository_url)
-        self.code_embedder.embed_chunks(chunks)
-        return chunks
