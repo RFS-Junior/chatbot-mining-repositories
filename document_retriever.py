@@ -12,6 +12,6 @@ class DocumentRetriever:
         vector_hits = self.client.search_similar(
             self.collection_name,   
             vector=self.embedder.encode(query),
-            limit= top_k * 2)
+            limit= top_k)
 
         return [hit.payload for hit in vector_hits]
