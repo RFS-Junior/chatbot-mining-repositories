@@ -10,8 +10,12 @@ class QueryChain:
         # 1. Recupera os documentos usando o DocumentRetriever
         docs = self.document_retriever.retrieve(query, top_k)
         
+        print(docs)
+        
         # 2. Gera o prompt usando os documentos recuperados
         prompt = self.create_prompt(query, docs)
+        
+        print(prompt)
         
         # 3. Passa o prompt para o LLM (Ollama LLM)
         response = self.llm.invoke(prompt)
@@ -23,7 +27,6 @@ class QueryChain:
         # Construa o contexto com os documentos recuperados
         doc_text = "\n".join([doc["content"] for doc in docs])
 
-        # Defina as instruções e o formato de resposta
         prompt = f"""
         Você é um assistente especializado em código. Abaixo estão documentos relevantes para a consulta do usuário:
 

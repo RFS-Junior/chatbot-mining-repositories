@@ -1,27 +1,20 @@
-import json
+import tiktoken
 from uuid import uuid4
 from data_processing.embedder import Embedder
-from langchain.text_splitter import TokenTextSplitter
-import tiktoken
 
 from services.github_service import GitHubService
 
 class DocumentProcessor:
-    def __init__(self):
+    def __init__(self, repo_name: str):
         """Inicializa o processador de repositórios com o token do GitHub e o modelo de embeddings."""
+        self.repo_name = repo_name
         self.tokenizer = tiktoken.get_encoding("cl100k_base")
-        self.code_embedder = Embedder("github_repo_x") 
-        self.splitter = TokenTextSplitter(
-            chunk_size=350,
-            chunk_overlap=20
-        )
+        self.code_embedder = Embedder(repo_name)
         self.github = GitHubService()
     
     def _chunk_data(self, repository_url: str):
         """Processa os dados extraídos do repositório e divide-os em chunks.""" 
-        repository_data = self.github.form_metadata(repository_url)
-        json_str = json.dumps(repository_data, indent=1, default=self.handle_commit)
-        chunks = self.splitter.split_text(json_str)
+        repository_data, chunks = self.github.form_metadata(repository_url)
 
         return [{
             "id": str(uuid4()),

@@ -14,5 +14,5 @@ class DocumentRetriever:
             self.collection_name,   
             vector=self.embedder.encode(query),
             limit= top_k)
-
+        
         return [hit.payload for hit in vector_hits]

@@ -1,17 +1,23 @@
 import os
+import json
 import time
 from github import Github
-from dotenv import load_dotenv
 from datetime import datetime
-from github.Commit import Commit
+from dotenv import load_dotenv
 from pydriller import Repository
+from github.Commit import Commit
+from langchain.text_splitter import TokenTextSplitter
 
 class GitHubService:
     def __init__(self):
         """Inicializa o processador de repositórios com o token do GitHub e o modelo de embeddings."""
         load_dotenv()
+        self.splitter = TokenTextSplitter(
+            chunk_size=350,
+            chunk_overlap=20
+        )
         self.github = Github(os.getenv('SECRET_KEY'))
-    
+        
     @staticmethod
     def handle_commit(obj):
         """Método estático para serializar objetos Commit do GitHub."""
@@ -113,5 +119,6 @@ class GitHubService:
 
         repository_data["created_at"] = datetime.utcnow().isoformat()
         repository_data["updated_at"] = datetime.utcnow().isoformat()
-
-        return repository_data
+    
+        json_str = json.dumps(repository_data, indent=1, default=self.handle_commit)
+        return repository_data, self.splitter.split_text(json_str)
